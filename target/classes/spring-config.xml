@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- Spring除控制器不要，剩下的业务逻辑组件都要，包括dao，包括service -->
+	<context:component-scan base-package="com.qss.hemaozhu">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	
+	<!-- 导入外部配置文件 -->
+	<context:property-placeholder location="classpath:application.properties"/>
+
+	<!-- 配置数据源 -->
+	<bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+		<property name="minPoolSize" value="${jdbc.minPoolSize}"></property>
+	</bean>
+	
+	<!-- 配置mybatis操作数据库;可以根据配置文件得到sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="dataSource" ref="ds"></property>
+		<property name="mapperLocations" value="classpath*:mapper/*/*.xml"></property>
+		<!-- 分页插件配置 -->
+        <property name="plugins">
+            <array>
+                <!--PaginationInterceptor 拦截器-->
+                <bean class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
+            </array>
+        </property>
+	</bean>
+	
+	<!-- 把每一个dao接口的实现加入到ioc容器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.qss.hemaozhu.*.mapper"></property>
+		<!--注入会话工厂-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+	
+	<!-- 配置事务控制；配置事务管理器 -->
+	<bean id="tm" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"></property>
+	</bean>
+	
+	<!-- 基于xml配置，配置事务，哪些方法切入事务还要写切入点表达式 -->
+	<aop:config>
+		<!-- 配置切入点表达式 -->
+		<aop:pointcut expression="execution(* com.qss.hemaozhu.*.service.*.*(..))" id="txPoint"/>
+		<aop:advisor advice-ref="myTx" pointcut-ref="txPoint"/>
+	</aop:config>
+	
+	<!-- 配置事务增强、事务属性、事务建议 -->
+	<tx:advice id="myTx" transaction-manager="tm">
+		<tx:attributes>
+			<tx:method name="*" rollback-for="java.lang.Exception"/>
+			<tx:method name="get*" read-only="true"/>
+			<!-- <tx:method name="insert*" isolation="READ_COMMITTED"/> -->
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- aop注解生效 -->
+    <aop:aspectj-autoproxy/>
+
+    <!--启用事务注解支持-->
+    <tx:annotation-driven transaction-manager="tm"/>
+    
+    <!-- 缓存管理器 使用Ehcache实现 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml" />
+	</bean>
+	
+	<import resource="classpath:shiro-config.xml"/>
+
+</beans>

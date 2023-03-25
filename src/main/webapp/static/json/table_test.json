@@ -1,0 +1,33 @@
+{
+	"msg": "请求成功",
+	"code": 0,
+	"data": [
+		{
+			"userId": 1,
+			"username": "qss",
+			"password": "6420987cb7b22abb7b6b5310edff2d5b",
+			"salt": "740551032",
+			"email": "964193177@qq.com",
+			"mobile": "18280473733",
+			"deptId": 1,
+			"dept": null,
+			"status": 0,
+			"createTime": "2020-03-11 12:33:46",
+			"updateTime": "2020-03-20 21:37:44"
+		},
+		{
+			"userId": 2,
+			"username": "admin",
+			"password": "6420987cb7b22abb7b6b5310edff2d5b",
+			"salt": "740551032",
+			"email": "964193177@qq.com",
+			"mobile": "18280473733",
+			"deptId": 2,
+			"dept": null,
+			"status": 0,
+			"createTime": "2020-03-19 13:12:45",
+			"updateTime": "2020-03-19 13:12:45"
+		}
+	],
+	"count": 2
+}

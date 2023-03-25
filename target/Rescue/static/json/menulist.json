@@ -1,0 +1,71 @@
+{
+	"data": [
+		{
+			"id": 7,
+			"parentId": 0,
+			"state": {
+				
+			},
+			"url": "",
+			"icon": "",
+			"text": "主页",
+			"nodes": []
+		},
+		{
+			"id": 2,
+			"parentId": 0,
+			"state": {
+				
+			},
+			"url": "",
+			"icon": "",
+			"text": "系统管理",
+			"nodes": [
+				{
+					"id": 3,
+					"parentId": 2,
+					"state": {
+						
+					},
+					"url": "",
+					"icon": "",
+					"text": "用户管理",
+					"nodes": []
+				},
+				{
+					"id": 4,
+					"parentId": 2,
+					"state": {
+						
+					},
+					"url": "",
+					"icon": "",
+					"text": "权限管理",
+					"nodes": []
+				},
+				{
+					"id": 5,
+					"parentId": 2,
+					"state": {
+						
+					},
+					"url": "",
+					"icon": "",
+					"text": "角色管理",
+					"nodes": []
+				},
+				{
+					"id": 6,
+					"parentId": 2,
+					"state": {
+						
+					},
+					"url": "",
+					"icon": "",
+					"text": "资源管理",
+					"nodes": []
+				}
+			]
+		}
+	]
+}
